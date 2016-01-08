@@ -36,9 +36,12 @@ ADD letsencrypt /opt/letsencrypt
 # Does a lot of package installations that we don't want at runtime.
 # Prints a "No installers" error but that's normal.
 RUN cd /opt/letsencrypt \
-  && ./letsencrypt-auto; exit 0
-
-RUN ln -s /root/.local/share/letsencrypt/bin/letsencrypt /usr/local/bin/letsencrypt
+  && ./letsencrypt-auto; exit 0 \
+  && ln -s /root/.local/share/letsencrypt/bin/letsencrypt /usr/local/bin/letsencrypt \
+  && rm -Rf /opt/letsencrypt \
+  && apt-get remove --purge \
+    virtualenv \
+  && apt-get autoremove
 
 # Commented out because we don't really want defaults
 #ENV cert_domains
