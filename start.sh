@@ -52,5 +52,8 @@ fi
 # Tell nginx the address and port of the service to proxy to
 sed -i "s/{{TARGET_SERVICE}}/${TARGET_SERVICE}/g;" /etc/nginx/conf.d/proxy.conf
 
+echo "Requesting certificate..."
+/usr/src/start-cert.sh || exit 1
+
 echo "Starting nginx..."
 nginx -g 'daemon off;'

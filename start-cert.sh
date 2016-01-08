@@ -17,8 +17,11 @@ domain_args=""
 for i in "${DOMAINS[@]}"
 do
   domain_args="$domain_args -d $i"
-  # do whatever on $i
 done
+
+if [ -n "${LETSENCRYPT_ENDPOINT+1}" ]; then
+  echo "server = $LETSENCRYPT_ENDPOINT" >> /etc/letsencrypt/cli.ini
+fi
 
 /usr/local/bin/letsencrypt certonly \
   --text --renew-by-default --agree-tos \

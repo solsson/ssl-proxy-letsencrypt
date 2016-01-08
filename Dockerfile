@@ -37,3 +37,12 @@ ADD letsencrypt /opt/letsencrypt
 # Prints a "No installers" error but that's normal.
 RUN cd /opt/letsencrypt \
   && ./letsencrypt-auto; exit 0
+
+RUN ln -s /root/.local/share/letsencrypt/bin/letsencrypt /usr/local/bin/letsencrypt
+
+# Commented out because we don't really want defaults
+#ENV cert_domains
+#ENV cert_email
+#ENV LETSENCRYPT_ENDPOINT
+
+ADD start-cert.sh /usr/src/
