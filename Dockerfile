@@ -32,3 +32,8 @@ ENTRYPOINT ./start.sh
 # https://letsencrypt.org/howitworks/#installing-lets-encrypt
 #ADD https://github.com/letsencrypt/letsencrypt/archive/master.zip /opt/letsencrypt
 ADD letsencrypt /opt/letsencrypt
+
+# Does a lot of package installations that we don't want at runtime.
+# Prints a "No installers" error but that's normal.
+RUN cd /opt/letsencrypt \
+  && ./letsencrypt-auto; exit 0
