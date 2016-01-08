@@ -28,3 +28,7 @@ ADD nginx/nginx.conf /etc/nginx/
 ADD nginx/proxy*.conf /usr/src/
 
 ENTRYPOINT ./start.sh
+
+# https://letsencrypt.org/howitworks/#installing-lets-encrypt
+#ADD https://github.com/letsencrypt/letsencrypt/archive/master.zip /opt/letsencrypt
+ADD letsencrypt /opt/letsencrypt
