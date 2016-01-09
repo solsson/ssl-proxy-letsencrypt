@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 
-# Env says we're using SSL 
+# Env says we're using SSL
 if [ -n "${ENABLE_SSL+1}" ] && [ "${ENABLE_SSL,,}" = "true" ]; then
   echo "Enabling SSL..."
   cp /usr/src/proxy_ssl.conf /etc/nginx/conf.d/proxy.conf
@@ -21,7 +21,7 @@ else
   cp /usr/src/proxy_nossl.conf /etc/nginx/conf.d/proxy.conf
 fi
 
-# If an htpasswd file is provided, download and configure nginx 
+# If an htpasswd file is provided, download and configure nginx
 if [ -n "${ENABLE_BASIC_AUTH+1}" ] && [ "${ENABLE_BASIC_AUTH,,}" = "true" ]; then
   echo "Enabling basic auth..."
   sed -i "s/#auth_basic/auth_basic/g;" /etc/nginx/conf.d/proxy.conf
@@ -51,6 +51,18 @@ fi
 
 # Tell nginx the address and port of the service to proxy to
 sed -i "s/{{TARGET_SERVICE}}/${TARGET_SERVICE}/g;" /etc/nginx/conf.d/proxy.conf
+
+echo "Requesting certificate..."
+./start-cert.sh || exit 1
+
+# Place cert where this image expects it
+cert_first=$(echo $cert_domains | awk '{print $1}')
+mkdir -p /etc/secrets
+ln -s /etc/letsencrypt/live/$cert_first/fullchain.pem /etc/secrets/proxycert
+ln -s /etc/letsencrypt/live/$cert_first/privkey.pem /etc/secrets/proxykey
+
+# Generate dhparams, this image expects it as part of secret
+/usr/bin/openssl dhparam -out /etc/secrets/dhparam 2048
 
 echo "Starting nginx..."
 nginx -g 'daemon off;'
