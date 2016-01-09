@@ -52,17 +52,17 @@ fi
 # Tell nginx the address and port of the service to proxy to
 sed -i "s/{{TARGET_SERVICE}}/${TARGET_SERVICE}/g;" /etc/nginx/conf.d/proxy.conf
 
+# Generate dhparams, this image expects it as part of secret
+mkdir -p /etc/secrets
+/usr/bin/openssl dhparam -out /etc/secrets/dhparam 2048
+
 echo "Requesting certificate..."
 ./start-cert.sh || exit 1
 
 # Place cert where this image expects it
 cert_first=$(echo $cert_domains | awk '{print $1}')
-mkdir -p /etc/secrets
 ln -s /etc/letsencrypt/live/$cert_first/fullchain.pem /etc/secrets/proxycert
 ln -s /etc/letsencrypt/live/$cert_first/privkey.pem /etc/secrets/proxykey
-
-# Generate dhparams, this image expects it as part of secret
-/usr/bin/openssl dhparam -out /etc/secrets/dhparam 2048
 
 echo "Starting nginx..."
 nginx -g 'daemon off;'
