@@ -64,5 +64,9 @@ ln -s /etc/letsencrypt/live/$cert_first/privkey.pem /etc/secrets/proxykey
 # Generate dhparams, this image expects it as part of secret
 /usr/bin/openssl dhparam -out /etc/secrets/dhparam 2048
 
-echo "Starting nginx..."
-nginx -g 'daemon off;'
+#echo "Starting nginx..."
+#nginx -g 'daemon off;'
+
+echo "Container ready in dev mode. Start nginx using: nginx -g 'daemon off;'"
+# keep it running in kubernetes
+sleep 3600
