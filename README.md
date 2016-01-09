@@ -1,3 +1,14 @@
+### ssl-proxy-letsencrypt
+
+Based on https://github.com/GoogleCloudPlatform/nginx-ssl-proxy
+and inspired by http://blog.ployst.com/development/2015/12/22/letsencrypt-on-kubernetes.html
+but
+the proxy container itself requests a cert from https://letsencrypt.org/ upon startup. No need to run kubectl from within the pod.
+
+Schedule restart of the container/pod within 90 days to renew before cert expiry.
+
+### nginx-ssl-proxy
+
 #nginx-ssl-proxy
 This repository is used to build a Docker image that acts as an HTTP [reverse proxy](http://en.wikipedia.org/wiki/Reverse_proxy) with optional (but strongly encouraged) support for acting as an [SSL termination proxy](http://en.wikipedia.org/wiki/SSL_termination_proxy). The proxy can also be configured to enforce [HTTP basic access authentication](http://en.wikipedia.org/wiki/Basic_access_authentication). Nginx is the HTTP server, and its SSL configuration is included (and may be modified to suit your needs) at `nginx/proxy_ssl.conf` in this repository.
 
