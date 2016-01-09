@@ -53,7 +53,7 @@ fi
 sed -i "s/{{TARGET_SERVICE}}/${TARGET_SERVICE}/g;" /etc/nginx/conf.d/proxy.conf
 
 echo "Requesting certificate..."
-/usr/src/start-cert.sh || exit 1
+./start-cert.sh || exit 1
 
 # Place cert where this image expects it
 cert_first=$(echo $cert_domains | awk '{print $1}')

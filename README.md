@@ -7,6 +7,73 @@ the proxy container itself requests a cert from https://letsencrypt.org/ upon st
 
 Schedule restart of the container/pod within 90 days to renew before cert expiry.
 
+A service could look like this:
+```
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ssl-proxy-service
+  labels:
+    role: ssl-proxy
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: https
+    protocol: TCP
+  selector:
+    role: ssl-proxy
+  type: LoadBalancer
+```
+
+And the proxy pod like this:
+```
+---
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: ssl-proxy-letsencrypt
+  labels:
+    role: ssl-proxy
+spec:
+  replicas: 1
+  selector:
+    role: ssl-proxy
+  template:
+    metadata:
+      name: ssl-proxy-letsencrypt
+      labels:
+        role: ssl-proxy
+    spec:
+      containers:
+      - name: ssl-proxy-letsencrypt
+        image: solsson/ssl-proxy-letsencrypt:latest
+        env:
+        - name: TARGET_SERVICE
+          value: my-actual-service:80
+        - name: ENABLE_SSL
+          value: 'true'
+        - name: cert_email
+          value: webmaster@example.net
+        - name: cert_domains
+          value: my.example.net my2.example.net
+        # remove this when it's time to get a real cert
+        - name: LETSENCRYPT_ENDPOINT
+          value: https://acme-staging.api.letsencrypt.org/directory
+        ports:
+        - name: http
+          containerPort: 80
+        - name: https
+          containerPort: 443
+```
+
+Make sure to create the k8s service before the pod, so letsencrypt validation can get through on startup.
+
 ### nginx-ssl-proxy
 
 #nginx-ssl-proxy
@@ -52,7 +119,7 @@ To run an SSL termination proxy you must have an existing SSL certificate and ke
       -v /path/to/secrets/dhparam.pem:/etc/secrets/dhparam \
       nginx-ssl-proxy
     ```
-    The really important thing here is that you map in your cert to `/etc/secrets/proxycert`, your key to `/etc/secrets/proxykey`, and your dhparam to `/etc/secrets/dhparam` as shown in the command above. 
+    The really important thing here is that you map in your cert to `/etc/secrets/proxycert`, your key to `/etc/secrets/proxykey`, and your dhparam to `/etc/secrets/dhparam` as shown in the command above.
 
 3. **Enable Basic Access Authentication**
 
