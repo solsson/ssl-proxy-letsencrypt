@@ -1,5 +1,7 @@
 ### ssl-proxy-letsencrypt
 
+Note: this fork was the inception of what is now maintained at https://github.com/Reposoft/docker-httpd-letsencrypt.
+
 Based on https://github.com/GoogleCloudPlatform/nginx-ssl-proxy
 and inspired by http://blog.ployst.com/development/2015/12/22/letsencrypt-on-kubernetes.html
 but
