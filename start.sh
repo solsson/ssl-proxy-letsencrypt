@@ -27,6 +27,18 @@ if [ -n "${ENABLE_BASIC_AUTH+1}" ] && [ "${ENABLE_BASIC_AUTH,,}" = "true" ]; the
   sed -i "s/#auth_basic/auth_basic/g;" /etc/nginx/conf.d/proxy.conf
 fi
 
+# If frames should be allowed
+if [ -n "${ENABLE_FRAMES+1}" ] && [ "${ENABLE_FRAMES,,}" = "true" ]; then
+  echo "Enabling frames for this build..."
+  sed -i "s/add_header X-Frame-Options DENY;//g;" /etc/nginx/conf.d/proxy.conf
+fi
+
+# If frames should be allowed
+if [ -n "${ENABLE_FRAMES_SAMEORIGIN+1}" ] && [ "${ENABLE_FRAMES_SAMEORIGIN,,}" = "true" ]; then
+  echo "Enabling frames from the same origin for this build..."
+  sed -i "s/add_header X-Frame-Options DENY;/add_header X-Frame-Options SAMEORIGIN;/g;" /etc/nginx/conf.d/proxy.conf
+fi
+
 # If the SERVICE_HOST_ENV_NAME and SERVICE_PORT_ENV_NAME vars are provided,
 # there are two options:
 #  - Option 1:
