@@ -24,6 +24,6 @@ if [ -n "${LETSENCRYPT_ENDPOINT+1}" ]; then
 fi
 
 /usr/local/bin/letsencrypt certonly \
-  --text --renew-by-default --agree-tos \
+  --text --renew-by-default --agree-tos --standalone \
   $domain_args \
   --email=$EMAIL
