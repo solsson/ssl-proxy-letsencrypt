@@ -144,3 +144,40 @@ To run an SSL termination proxy you must have an existing SSL certificate and ke
       -v /path/to/secrets/htpasswd:/etc/secrets/htpasswd \
       nginx-ssl-proxy
     ```
+
+4. **Enabling frames**
+
+    The container does by default not allow any frames to be opened due to
+    security issues doing this. While this is a recommended default behavior,
+    it might break certain applications.
+    
+    If you are encountering issues you can either turn of the frame denial
+    completely by passing the `ENABLE_FRAMES` environment variable to it:
+    
+    ```shell
+    docker run \
+      -e ENABLE_SSL=true \
+      -e ENABLE_FRAMES=true \
+      -e TARGET_SERVICE=THE_ADDRESS_OR_HOST_YOU_ARE_PROXYING_TO \
+      -v /path/to/secrets/cert.crt:/etc/secrets/proxycert \
+      -v /path/to/secrets/key.pem:/etc/secrets/proxykey \
+      -v /path/to/secrets/dhparam.pem:/etc/secrets/dhparam \
+      -v /path/to/secrets/htpasswd:/etc/secrets/htpasswd \
+      nginx-ssl-proxy
+    ```
+    
+    Alternatively if you only need frames from your own domain you can also
+    use the [SAMEORIGIN](https://developer.mozilla.org/en-US/docs/Web/HTTP/X-Frame-Options) policy
+    through setting the `ENABLE_FRAMES_SAMEORIGIN` variable to true.
+    
+    ```shell
+    docker run \
+      -e ENABLE_SSL=true \
+      -e ENABLE_FRAMES_SAMEORIGIN=true \
+      -e TARGET_SERVICE=THE_ADDRESS_OR_HOST_YOU_ARE_PROXYING_TO \
+      -v /path/to/secrets/cert.crt:/etc/secrets/proxycert \
+      -v /path/to/secrets/key.pem:/etc/secrets/proxykey \
+      -v /path/to/secrets/dhparam.pem:/etc/secrets/dhparam \
+      -v /path/to/secrets/htpasswd:/etc/secrets/htpasswd \
+      nginx-ssl-proxy
+    ```
